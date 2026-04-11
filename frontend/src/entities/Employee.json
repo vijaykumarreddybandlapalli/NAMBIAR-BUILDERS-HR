@@ -1,0 +1,57 @@
+{
+  "name": "Employee",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "email": {
+      "type": "string",
+      "title": "Email"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department"
+    },
+    "designation": {
+      "type": "string",
+      "title": "Designation"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date",
+      "title": "Date of Birth"
+    },
+    "anniversary_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Anniversary Date"
+    },
+    "joining_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Joining Date"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ],
+      "title": "Status"
+    },
+    "welcome_mail_sent": {
+      "type": "boolean",
+      "title": "Welcome Mail Sent"
+    }
+  },
+  "required": [
+    "full_name",
+    "email"
+  ]
+}
