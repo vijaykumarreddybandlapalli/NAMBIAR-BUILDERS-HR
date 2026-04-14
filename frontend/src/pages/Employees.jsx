@@ -1,134 +1,102 @@
-import { useState, useEffect, useRef } from "react";
-import API from "@/api/api";
-import { Upload, Plus, Search, Trash2, Edit2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import EmployeeDialog from "../components/employees/EmployeeDialog";
-import EmployeeTable from "../components/employees/EmployeeTable";
+import { useEffect, useState } from "react";
+import API from "../api/api";
 
 export default function Employees() {
   const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editEmployee, setEditEmployee] = useState(null);
-  const fileInputRef = useRef(null);
-
-  // ✅ LOAD EMPLOYEES FROM BACKEND
-  const loadEmployees = async () => {
-    try {
-      const res = await API.get("/employees");
-      setEmployees(res.data);
-    } catch (err) {
-      console.error("Error loading employees", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadEmployees();
   }, []);
 
-  // ✅ DELETE
-  const handleDelete = async (id) => {
+  const loadEmployees = async () => {
     try {
-      await API.delete(`/employees/${id}`);
-      loadEmployees();
+      setLoading(true);
+      setError("");
+
+      const res = await API.get("/api/employees");
+      setEmployees(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error("Delete error", err);
+      console.error("Employees load error:", err);
+      setError("Failed to load employees from backend.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // ✅ EDIT OPEN
-  const handleEdit = (emp) => {
-    setEditEmployee(emp);
-    setDialogOpen(true);
-  };
+  const filtered = employees.filter((emp) => {
+    const name = (emp.name || emp.full_name || "").toLowerCase();
+    const email = (emp.email || "").toLowerCase();
+    const query = search.toLowerCase();
 
-  // ✅ SAVE (ADD + UPDATE)
-  const handleSave = async (data) => {
-    try {
-      if (editEmployee) {
-        // UPDATE
-        await API.put(`/employees/${editEmployee.id}`, data);
-      } else {
-        // CREATE
-        await API.post("/employees", data);
-      }
-
-      setDialogOpen(false);
-      setEditEmployee(null);
-      loadEmployees();
-    } catch (err) {
-      console.error("Save error", err);
-    }
-  };
-
-  // ✅ SEARCH FILTER
-  const filtered = employees.filter(
-    (e) =>
-      e.name?.toLowerCase().includes(search.toLowerCase()) ||
-      e.email?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-gray-200 border-t-black rounded-full animate-spin" />
-      </div>
-    );
-  }
+    return name.includes(query) || email.includes(query);
+  });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div>
+      <h1 style={{ marginBottom: "20px" }}>Employees</h1>
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Employees</h1>
-          <p className="text-sm text-gray-500">
-            Manage your team — {employees.length} employees
-          </p>
-        </div>
+      <input
+        type="text"
+        placeholder="Search employees..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          width: "320px",
+          padding: "12px",
+          borderRadius: "10px",
+          border: "1px solid rgba(216,160,61,0.2)",
+          background: "#2a1b10",
+          color: "#f5e6c8",
+          marginBottom: "20px",
+          outline: "none",
+        }}
+      />
 
-        <Button
-          onClick={() => {
-            setEditEmployee(null);
-            setDialogOpen(true);
+      {loading && <p>Loading employees...</p>}
+      {error && <p style={{ color: "#ff9b9b" }}>{error}</p>}
+
+      {!loading && !error && (
+        <div
+          style={{
+            background: "#2a1b10",
+            border: "1px solid rgba(216,160,61,0.16)",
+            borderRadius: "14px",
+            padding: "20px",
           }}
-          className="bg-yellow-400 text-black hover:bg-yellow-500"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Employee
-        </Button>
-      </div>
-
-      {/* SEARCH */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input
-          placeholder="Search employees..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
-        />
-      </div>
-
-      {/* TABLE */}
-      <EmployeeTable
-        employees={filtered}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-
-      {/* DIALOG */}
-      <EmployeeDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        employee={editEmployee}
-        onSave={handleSave}
-      />
+          {filtered.length === 0 ? (
+            <p style={{ color: "#bfa77c" }}>No employees found.</p>
+          ) : (
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ textAlign: "left", color: "#d8a03d" }}>
+                  <th style={{ paddingBottom: "12px" }}>Name</th>
+                  <th style={{ paddingBottom: "12px" }}>Email</th>
+                  <th style={{ paddingBottom: "12px" }}>Department</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((emp, index) => (
+                  <tr key={emp._id || emp.id || index}>
+                    <td style={{ padding: "12px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                      {emp.name || emp.full_name || "No name"}
+                    </td>
+                    <td style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                      {emp.email || "No email"}
+                    </td>
+                    <td style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                      {emp.department || "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
     </div>
   );
 }

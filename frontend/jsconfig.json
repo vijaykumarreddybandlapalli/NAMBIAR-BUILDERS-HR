@@ -1,8 +1,17 @@
+// {
+//   "compilerOptions": {
+//     "paths": {
+//       "@/*": ["frontend/src/*"]
+//     },
+//     "ignoreDeprecations": "6.0"
+//   }
+// }
+
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["frontend/src/*"]
-    },
-    "ignoreDeprecations": "6.0"
+      "@/*": ["src/*"]
+    }
   }
 }
