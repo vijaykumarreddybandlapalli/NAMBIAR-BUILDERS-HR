@@ -1,5 +1,7 @@
+import { startEmailJob } from "./src/jobs/emailJob.js";
 import express from "express";
 import cors from "cors";
+import employeeRoutes from "./src/routes/employeeRoutes.js";
 
 const app = express();
 
@@ -15,22 +17,10 @@ app.get("/", (req, res) => {
   res.send("Backend is running");
 });
 
-app.get("/api/employees", (req, res) => {
-  res.json([
-    {
-      id: 1,
-      name: "Rajesh Kumar",
-      email: "rajesh@nambiar.com",
-      department: "HR",
-    },
-    {
-      id: 2,
-      name: "Priya Menon",
-      email: "priya@nambiar.com",
-      department: "Finance",
-    },
-  ]);
-});
+app.use("/api/employees", employeeRoutes);
+
+// ✅ START CRON JOB HERE
+startEmailJob();
 
 const PORT = 5000;
 app.listen(PORT, () => {

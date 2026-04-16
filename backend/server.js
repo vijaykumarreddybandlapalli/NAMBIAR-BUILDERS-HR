@@ -1,26 +1,29 @@
+import "dotenv/config";
+
+import { startEmailJob } from "./src/jobs/emailJob.js";
 import express from "express";
 import cors from "cors";
+import employeeRoutes from "./src/routes/employeeRoutes.js";
 
 const app = express();
 
-app.use(cors({
-  origin: "http://localhost:5173",
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Backend running");
+  res.send("Backend is running");
 });
 
-app.get("/api/employees", (req, res) => {
-  res.json([
-    { id: 1, name: "Rajesh Kumar", email: "rajesh@nambiar.com", department: "HR" },
-    { id: 2, name: "Priya Menon", email: "priya@nambiar.com", department: "Finance" },
-  ]);
-});
+app.use("/api/employees", employeeRoutes);
+
+startEmailJob();
 
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
