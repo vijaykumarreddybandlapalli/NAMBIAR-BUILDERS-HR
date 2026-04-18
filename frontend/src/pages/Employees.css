@@ -1,0 +1,101 @@
+.employees-page {
+    padding: 24px;
+    background: #eaf3ff; /* light blue background */
+    min-height: 100vh;
+  }
+  
+  /* HEADER */
+  .employees-header {
+    background: #dbeafe; /* light blue card */
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .employees-header h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #1d3557;
+  }
+  
+  .employees-header p {
+    margin-top: 6px;
+    color: #4a6fa5;
+  }
+  
+  /* CARD */
+  .employees-card {
+    background: #e3f0ff; /* soft blue */
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid #c7d7ff;
+  }
+  
+  /* INPUTS */
+  .employees-card input {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    border: 1px solid #c7d7ff;
+    background: #f8fbff;
+  }
+  
+  /* INPUT FOCUS */
+  .employees-card input:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+  }
+  
+  /* LABEL */
+  .employees-card label {
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+    color: #1d3557;
+  }
+  
+  /* BUTTON */
+  .employees-card button {
+    background: #4a90e2;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 14px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.3s;
+  }
+  
+  .employees-card button:hover {
+    background: #357abd;
+  }
+  
+  /* TABLE */
+  .employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  
+  .employee-table th {
+    background: #dbeafe;
+    padding: 12px;
+    text-align: left;
+    color: #1d3557;
+  }
+  
+  .employee-table td {
+    padding: 12px;
+    border-top: 1px solid #d6e4ff;
+  }
+  
+  .employee-table tr:hover {
+    background: #f0f7ff;
+  }
+  
+  /* EMPTY */
+  .empty-text {
+    color: #4a6fa5;
+  }

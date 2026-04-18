@@ -191,6 +191,263 @@
 //     </div>
 //   );
 // }
+import { useState } from "react";
+import "./Settings.css";
+
 export default function Settings() {
-  return <h1>Settings</h1>;
+  const [openSection, setOpenSection] = useState("email");
+
+  const [settings, setSettings] = useState({
+    primaryFromEmail: "hr@nambiarbuilders.com",
+    secondaryFromEmail: "info@nambiarbuilders.com",
+    bccEmails: "admin@nambiarbuilders.com",
+    sendTime: "09:00",
+    welcomeMailDay: "Monday",
+    autoSendBirthday: true,
+    autoSendAnniversary: true,
+  });
+
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("User");
+
+  const [users, setUsers] = useState([
+    {
+      id: 1,
+      name: "Anu",
+      email: "anushanagireddy804@gmail.com",
+      role: "Admin",
+    },
+  ]);
+
+  const toggleSection = (section) => {
+    setOpenSection(openSection === section ? "" : section);
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setSettings((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSaveSettings = () => {
+    console.log("Saved Settings:", settings);
+    alert("Settings saved successfully");
+  };
+
+  const handleInviteUser = () => {
+    if (!inviteEmail.trim()) {
+      alert("Enter user email");
+      return;
+    }
+
+    const newUser = {
+      id: Date.now(),
+      name: "New User",
+      email: inviteEmail,
+      role: inviteRole,
+    };
+
+    setUsers((prev) => [...prev, newUser]);
+    setInviteEmail("");
+    setInviteRole("User");
+    alert("User invited successfully");
+  };
+
+  return (
+    <div className="settings-page">
+      <div className="settings-header-card">
+        <h1>Settings</h1>
+        <p>Configure email settings, scheduling, and user permissions.</p>
+      </div>
+
+      <div className="settings-list">
+        <div className="settings-item">
+          <button
+            className="settings-item-header"
+            onClick={() => toggleSection("email")}
+          >
+            <div>
+              <h2>Email Configuration</h2>
+              <span>Sender emails and BCC setup</span>
+            </div>
+            <span className="arrow">{openSection === "email" ? "−" : "+"}</span>
+          </button>
+
+          {openSection === "email" && (
+            <div className="settings-item-body">
+              <div className="form-group">
+                <label>Primary From Email</label>
+                <input
+                  type="email"
+                  name="primaryFromEmail"
+                  value={settings.primaryFromEmail}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Secondary From Email</label>
+                <input
+                  type="email"
+                  name="secondaryFromEmail"
+                  value={settings.secondaryFromEmail}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>BCC Emails</label>
+                <input
+                  type="text"
+                  name="bccEmails"
+                  value={settings.bccEmails}
+                  onChange={handleChange}
+                  placeholder="Comma separated emails"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="settings-item">
+          <button
+            className="settings-item-header"
+            onClick={() => toggleSection("schedule")}
+          >
+            <div>
+              <h2>Scheduling</h2>
+              <span>Send time and auto-send controls</span>
+            </div>
+            <span className="arrow">
+              {openSection === "schedule" ? "−" : "+"}
+            </span>
+          </button>
+
+          {openSection === "schedule" && (
+            <div className="settings-item-body">
+              <div className="form-group">
+                <label>Send Time</label>
+                <input
+                  type="time"
+                  name="sendTime"
+                  value={settings.sendTime}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Welcome Mail Day</label>
+                <select
+                  name="welcomeMailDay"
+                  value={settings.welcomeMailDay}
+                  onChange={handleChange}
+                >
+                  <option>Monday</option>
+                  <option>Tuesday</option>
+                  <option>Wednesday</option>
+                  <option>Thursday</option>
+                  <option>Friday</option>
+                  <option>Saturday</option>
+                  <option>Sunday</option>
+                </select>
+              </div>
+
+              <div className="switch-row">
+                <div>
+                  <h3>Auto-send Birthday Wishes</h3>
+                  <p>Send birthday emails automatically.</p>
+                </div>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    name="autoSendBirthday"
+                    checked={settings.autoSendBirthday}
+                    onChange={handleChange}
+                  />
+                  <span className="slider"></span>
+                </label>
+              </div>
+
+              <div className="switch-row">
+                <div>
+                  <h3>Auto-send Anniversary Wishes</h3>
+                  <p>Send anniversary emails automatically.</p>
+                </div>
+                <label className="switch">
+                  <input
+                    type="checkbox"
+                    name="autoSendAnniversary"
+                    checked={settings.autoSendAnniversary}
+                    onChange={handleChange}
+                  />
+                  <span className="slider"></span>
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="settings-item">
+          <button
+            className="settings-item-header"
+            onClick={() => toggleSection("users")}
+          >
+            <div>
+              <h2>User Management</h2>
+              <span>Invite and manage users</span>
+            </div>
+            <span className="arrow">{openSection === "users" ? "−" : "+"}</span>
+          </button>
+
+          {openSection === "users" && (
+            <div className="settings-item-body">
+              <div className="invite-row">
+                <input
+                  type="email"
+                  placeholder="user@example.com"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                />
+
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                >
+                  <option>User</option>
+                  <option>Admin</option>
+                  <option>Staff</option>
+                </select>
+
+                <button className="invite-btn" onClick={handleInviteUser}>
+                  Invite User
+                </button>
+              </div>
+
+              <div className="users-list">
+                {users.length === 0 ? (
+                  <p className="empty-text">No users found.</p>
+                ) : (
+                  users.map((user) => (
+                    <div className="user-card" key={user.id}>
+                      <div>
+                        <h3>{user.name}</h3>
+                        <p>{user.email}</p>
+                      </div>
+                      <span className="role-badge">{user.role}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <button className="save-btn" onClick={handleSaveSettings}>
+        Save Settings
+      </button>
+    </div>
+  );
 }

@@ -1,9 +1,11 @@
 import "dotenv/config";
-
-import { startEmailJob } from "./src/jobs/emailJob.js";
 import express from "express";
 import cors from "cors";
+
 import employeeRoutes from "./src/routes/employeeRoutes.js";
+import eventRoutes from "./src/routes/event.routes.js";
+import templateRoutes from "./src/routes/template.routes.js";
+import { startEmailJob } from "./src/jobs/emailJob.js";
 
 const app = express();
 
@@ -20,10 +22,13 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/employees", employeeRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/templates", templateRoutes);
 
 startEmailJob();
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

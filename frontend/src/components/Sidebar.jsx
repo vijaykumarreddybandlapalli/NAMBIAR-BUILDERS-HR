@@ -1,55 +1,98 @@
-import { NavLink } from "react-router-dom";
+export default function Sidebar({ activePage, setActivePage }) {
+  const menu = [
+    { key: "home", label: "Home", section: "top" },
+    { key: "dashboard", label: "Dashboard", section: "main" },
+    { key: "employees", label: "Employees", section: "main" },
+    { key: "events", label: "Events", section: "automation" },
+    { key: "templates", label: "Templates", section: "automation" },
+    { key: "calendar", label: "Calendar", section: "automation" },
+    { key: "email-center", label: "Email Center", section: "automation" },
+    { key: "email-queue", label: "Email Queue", section: "automation" },
+    { key: "settings", label: "Settings", section: "settings" },
+  ];
 
-const linkStyle = ({ isActive }) => ({
-  display: "block",
-  padding: "12px 14px",
-  borderRadius: "10px",
-  textDecoration: "none",
-  color: isActive ? "#f8e7bf" : "#bfa77c",
-  background: isActive ? "rgba(216,160,61,0.16)" : "transparent",
-  marginBottom: "8px",
-});
+  const renderSection = (title, sectionKey) => {
+    const items = menu.filter((item) => item.section === sectionKey);
 
-export default function Sidebar() {
+    return (
+      <div style={styles.section}>
+        {title ? <p style={styles.sectionTitle}>{title}</p> : null}
+
+        {items.map((item) => (
+          <button
+            key={item.key}
+            onClick={() => setActivePage(item.key)}
+            style={{
+              ...styles.menuButton,
+              ...(activePage === item.key ? styles.activeButton : {}),
+            }}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <aside
-      style={{
-        width: "240px",
-        background: "#1a1109",
-        borderRight: "1px solid rgba(255,255,255,0.08)",
-        padding: "18px 14px",
-      }}
-    >
-      <div style={{ marginBottom: "28px" }}>
-        <h2 style={{ margin: 0, color: "#d8a03d", fontSize: "20px" }}>Nambiar Builders</h2>
-        <p style={{ margin: "4px 0 0", color: "#8f7750", fontSize: "12px", letterSpacing: "1px" }}>
-          HR FAMILY PORTAL
-        </p>
+    <aside style={styles.sidebar}>
+      <div>
+        <h1 style={styles.logo}>Nambiar Builders</h1>
+        <p style={styles.subLogo}>HR FAMILY PORTAL</p>
       </div>
 
-      <div style={{ marginBottom: "10px", color: "#705d3f", fontSize: "11px" }}>MAIN</div>
-
-      <NavLink to="/dashboard" style={linkStyle}>
-        Dashboard
-      </NavLink>
-
-      <NavLink to="/employees" style={linkStyle}>
-        Employees
-      </NavLink>
-
-      <div style={{ marginTop: "24px", marginBottom: "10px", color: "#705d3f", fontSize: "11px" }}>
-        AUTOMATION
-      </div>
-
-      <div style={{ padding: "12px 14px", color: "#bfa77c" }}>Events</div>
-      <div style={{ padding: "12px 14px", color: "#bfa77c" }}>Templates</div>
-      <div style={{ padding: "12px 14px", color: "#bfa77c" }}>Calendar</div>
-
-      <div style={{ marginTop: "24px", marginBottom: "10px", color: "#705d3f", fontSize: "11px" }}>
-        SETTINGS
-      </div>
-
-      <div style={{ padding: "12px 14px", color: "#bfa77c" }}>Settings</div>
+      {renderSection("", "top")}
+      {renderSection("MAIN", "main")}
+      {renderSection("AUTOMATION", "automation")}
+      {renderSection("SETTINGS", "settings")}
     </aside>
   );
 }
+
+const styles = {
+  sidebar: {
+    width: "330px",
+    background: "#24160d",
+    color: "#f3c56b",
+    padding: "22px 16px",
+    minHeight: "100vh",
+    borderRight: "1px solid rgba(255,255,255,0.04)",
+  },
+  logo: {
+    margin: 0,
+    color: "#f3b54a",
+    fontSize: "28px",
+    fontWeight: "700",
+  },
+  subLogo: {
+    marginTop: "4px",
+    color: "#d8a94d",
+    fontSize: "13px",
+    letterSpacing: "0.4px",
+  },
+  section: {
+    marginTop: "26px",
+  },
+  sectionTitle: {
+    color: "#a97a2b",
+    fontSize: "13px",
+    marginBottom: "12px",
+  },
+  menuButton: {
+    width: "100%",
+    textAlign: "left",
+    background: "transparent",
+    color: "#f8c85c",
+    border: "none",
+    borderRadius: "18px",
+    padding: "14px 20px",
+    fontSize: "15px",
+    marginBottom: "10px",
+    cursor: "pointer",
+  },
+  activeButton: {
+    background: "#8b5a1f",
+    color: "#ffffff",
+    fontWeight: "700",
+  },
+};

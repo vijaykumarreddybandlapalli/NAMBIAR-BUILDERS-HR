@@ -1,0 +1,144 @@
+.events-page {
+    padding: 24px;
+    background: #f5f1ea;
+    min-height: 100vh;
+  }
+  
+  .events-card,
+  .events-list-card {
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+  }
+  
+  .events-card h1,
+  .events-list-card h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d241c;
+  }
+  
+  .events-card p {
+    margin-top: 8px;
+    margin-bottom: 24px;
+    color: #8a7f73;
+    font-size: 15px;
+  }
+  
+  .events-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #3d342c;
+    margin-bottom: 10px;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    border: 1px solid #ddd2c3;
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-size: 16px;
+    outline: none;
+    background: #fffdf9;
+    color: #2d241c;
+    box-sizing: border-box;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: #a06d2c;
+    box-shadow: 0 0 0 3px rgba(160, 109, 44, 0.12);
+  }
+  
+  .form-group textarea {
+    resize: vertical;
+    min-height: 180px;
+  }
+  
+  .full-width {
+    margin-bottom: 24px;
+  }
+  
+  .submit-btn {
+    width: 100%;
+    background: #9a6b2f;
+    color: #ffffff;
+    border: none;
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background: #7f5523;
+  }
+  
+  .submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 18px;
+  }
+  
+  .events-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  
+  .events-table th {
+    background: #f3ece2;
+    color: #3d342c;
+    text-align: left;
+    padding: 14px;
+    font-size: 15px;
+  }
+  
+  .events-table td {
+    padding: 14px;
+    border-top: 1px solid #eee2d3;
+    color: #4a4037;
+    font-size: 14px;
+  }
+  
+  .events-table tr:hover {
+    background: #fcf8f3;
+  }
+  
+  .empty-text {
+    margin-top: 16px;
+    color: #8a7f73;
+  }
+  
+  @media (max-width: 768px) {
+    .events-row {
+      grid-template-columns: 1fr;
+    }
+  
+    .events-card,
+    .events-list-card {
+      padding: 20px;
+    }
+  }
