@@ -97,12 +97,15 @@ export default function Employees({ refreshAllData }) {
         ? new Date(emp.joiningDate).toISOString().split("T")[0]
         : "",
     });
+
     window.scrollTo({ top: 0, behavior: "smooth" });
     toast.success("Employee loaded for editing");
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this employee?"
+    );
     if (!confirmDelete) return;
 
     try {
@@ -173,7 +176,10 @@ export default function Employees({ refreshAllData }) {
             row.dateOfBirth || row.DateOfBirth || row["Date of Birth"]
           ),
           joiningDate: normalizeExcelDate(
-            row.joiningDate || row.DateOfJoining || row["Date of Joining"] || row.joining_date
+            row.joiningDate ||
+              row.DateOfJoining ||
+              row["Date of Joining"] ||
+              row.joining_date
           ),
         }));
 
@@ -233,7 +239,7 @@ export default function Employees({ refreshAllData }) {
       <div className="employees-card">
         <h2>{editingId ? "Edit Employee" : "Add Employee"}</h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="employee-form">
           <input
             name="employeeId"
             placeholder="Employee ID"
@@ -279,7 +285,7 @@ export default function Employees({ refreshAllData }) {
           />
 
           <div className="employee-form-actions">
-            <button type="submit">
+            <button type="submit" className="primary-btn">
               {editingId ? "Update Employee" : "Add Employee"}
             </button>
 
@@ -299,7 +305,8 @@ export default function Employees({ refreshAllData }) {
       <div className="employees-card">
         <h2>Import Employees from Excel</h2>
         <p className="empty-text">
-          Excel columns supported: Employee ID, Name, Email, Department, Date of Birth, Date of Joining
+          Excel columns supported: Employee ID, Name, Email, Department, Date of
+          Birth, Date of Joining
         </p>
 
         <div className="excel-import-box">
@@ -317,58 +324,60 @@ export default function Employees({ refreshAllData }) {
         {employees.length === 0 ? (
           <p className="empty-text">No employees found.</p>
         ) : (
-          <table className="employee-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Date of Birth</th>
-                <th>Date of Joining</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {employees.map((emp) => (
-                <tr key={emp.id}>
-                  <td>{emp.employeeId || "-"}</td>
-                  <td>{emp.name}</td>
-                  <td>{emp.email}</td>
-                  <td>{emp.department}</td>
-                  <td>
-                    {emp.dateOfBirth
-                      ? new Date(emp.dateOfBirth).toLocaleDateString()
-                      : "-"}
-                  </td>
-                  <td>
-                    {emp.joiningDate
-                      ? new Date(emp.joiningDate).toLocaleDateString()
-                      : "-"}
-                  </td>
-                  <td>
-                    <div className="employee-action-buttons">
-                      <button
-                        type="button"
-                        className="edit-btn"
-                        onClick={() => handleEdit(emp)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="delete-btn"
-                        onClick={() => handleDelete(emp.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+          <div className="employee-table-wrapper">
+            <table className="employee-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Department</th>
+                  <th>Date of Birth</th>
+                  <th>Date of Joining</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {employees.map((emp) => (
+                  <tr key={emp.id}>
+                    <td>{emp.employeeId || "-"}</td>
+                    <td>{emp.name}</td>
+                    <td>{emp.email}</td>
+                    <td>{emp.department}</td>
+                    <td>
+                      {emp.dateOfBirth
+                        ? new Date(emp.dateOfBirth).toLocaleDateString()
+                        : "-"}
+                    </td>
+                    <td>
+                      {emp.joiningDate
+                        ? new Date(emp.joiningDate).toLocaleDateString()
+                        : "-"}
+                    </td>
+                    <td>
+                      <div className="employee-action-buttons">
+                        <button
+                          type="button"
+                          className="edit-btn"
+                          onClick={() => handleEdit(emp)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="delete-btn"
+                          onClick={() => handleDelete(emp.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

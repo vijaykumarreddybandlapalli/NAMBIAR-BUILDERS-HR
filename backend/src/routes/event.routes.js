@@ -1,106 +1,128 @@
 import express from "express";
 import prisma from "../config/db.js";
-import { sendMail } from "../utils/mailer.js";
 
 const router = express.Router();
 
-// Optional browser test
-router.get("/send-custom", (req, res) => {
-  res.json({ message: "send-custom route is working. Use POST request here." });
-});
-
-router.get("/send-employee", (req, res) => {
-  res.json({ message: "send-employee route is working. Use POST request here." });
-});
-
-// SEND CUSTOM EMAIL
-router.post("/send-custom", async (req, res) => {
+// GET all events
+router.get("/", async (req, res) => {
   try {
-    const { to, subject, message } = req.body;
-
-    if (!to || !subject || !message) {
-      return res.status(400).json({
-        error: "To, subject and message are required",
-      });
-    }
-
-    await sendMail({
-      to,
-      subject,
-      html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <p>${message}</p>
-        </div>
-      `,
+    const events = await prisma.event.findMany({
+      orderBy: { date: "asc" },
     });
 
-    res.json({
-      success: true,
-      message: "Custom email sent successfully",
-    });
+    return res.json(events);
   } catch (error) {
-    console.error("SEND CUSTOM EMAIL ERROR:", error);
-    res.status(500).json({ error: error.message });
+    console.error("LOAD EVENTS ERROR:", error);
+    return res.status(500).json({
+      error: "Failed to load events",
+    });
   }
 });
 
-// SEND EMPLOYEE EMAIL
-router.post("/send-employee", async (req, res) => {
+// CREATE event
+router.post("/", async (req, res) => {
   try {
-    const { employeeId, type } = req.body;
+    const { title, date, description } = req.body;
 
-    if (!employeeId || !type) {
+    if (!title || !date) {
       return res.status(400).json({
-        error: "employeeId and type are required",
+        error: "Event name and date are required",
       });
     }
 
-    const employee = await prisma.employee.findUnique({
-      where: { id: Number(employeeId) },
+    const event = await prisma.event.create({
+      data: {
+        title: title.trim(),
+        date: new Date(date),
+        description: description ? description.trim() : "",
+      },
     });
 
-    if (!employee) {
-      return res.status(404).json({ error: "Employee not found" });
-    }
-
-    let subject = "";
-    let html = "";
-
-    if (type === "birthday") {
-      subject = `Happy Birthday ${employee.name}!`;
-      html = `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2>Happy Birthday, ${employee.name} 🎉</h2>
-          <p>Wishing you a wonderful day filled with happiness and success.</p>
-          <p>Best wishes,<br/>Nambiar Builders</p>
-        </div>
-      `;
-    } else if (type === "anniversary") {
-      subject = `Happy Work Anniversary ${employee.name}!`;
-      html = `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2>Happy Work Anniversary, ${employee.name} 🏆</h2>
-          <p>Thank you for your dedication and contribution to Nambiar Builders.</p>
-          <p>Best wishes,<br/>Nambiar Builders</p>
-        </div>
-      `;
-    } else {
-      return res.status(400).json({ error: "Invalid email type" });
-    }
-
-    await sendMail({
-      to: employee.email,
-      subject,
-      html,
-    });
-
-    res.json({
+    return res.status(201).json({
       success: true,
-      message: `${type} email sent successfully`,
+      message: "Event created successfully",
+      event,
     });
   } catch (error) {
-    console.error("SEND EMPLOYEE EMAIL ERROR:", error);
-    res.status(500).json({ error: error.message });
+    console.error("CREATE EVENT ERROR:", error);
+    return res.status(500).json({
+      error: "Failed to create event",
+    });
+  }
+});
+
+// UPDATE event
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, date, description } = req.body;
+
+    if (!title || !date) {
+      return res.status(400).json({
+        error: "Event name and date are required",
+      });
+    }
+
+    const existingEvent = await prisma.event.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!existingEvent) {
+      return res.status(404).json({
+        error: "Event not found",
+      });
+    }
+
+    const updatedEvent = await prisma.event.update({
+      where: { id: Number(id) },
+      data: {
+        title: title.trim(),
+        date: new Date(date),
+        description: description ? description.trim() : "",
+      },
+    });
+
+    return res.json({
+      success: true,
+      message: "Event updated successfully",
+      event: updatedEvent,
+    });
+  } catch (error) {
+    console.error("UPDATE EVENT ERROR:", error);
+    return res.status(500).json({
+      error: "Failed to update event",
+    });
+  }
+});
+
+// DELETE event
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existingEvent = await prisma.event.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!existingEvent) {
+      return res.status(404).json({
+        error: "Event not found",
+      });
+    }
+
+    await prisma.event.delete({
+      where: { id: Number(id) },
+    });
+
+    return res.json({
+      success: true,
+      message: "Event deleted successfully",
+    });
+  } catch (error) {
+    console.error("DELETE EVENT ERROR:", error);
+    return res.status(500).json({
+      error: "Failed to delete event",
+    });
   }
 });
 

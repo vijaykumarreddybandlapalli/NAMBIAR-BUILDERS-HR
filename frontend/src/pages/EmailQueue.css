@@ -1,0 +1,224 @@
+.email-queue-page {
+    min-height: 100vh;
+    padding: 30px;
+    background: linear-gradient(135deg, #f5e6d3 0%, #dbeafe 50%, #dcfce7 100%);
+    font-family: "Inter", sans-serif;
+  }
+  
+  .email-queue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  
+  .queue-header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .queue-title {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 800;
+    color: #7c2d12;
+  }
+  
+  .queue-subtext {
+    margin: 8px 0 0;
+    font-size: 18px;
+    color: #6b7280;
+  }
+  
+  .send-btn,
+  .secondary-btn {
+    border: none;
+    outline: none;
+    padding: 12px 18px;
+    border-radius: 12px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  }
+  
+  .send-btn {
+    background: linear-gradient(90deg, #7c2d12, #b45309);
+  }
+  
+  .secondary-btn {
+    background: linear-gradient(90deg, #2563eb, #0d9488);
+  }
+  
+  .send-btn:disabled,
+  .secondary-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .queue-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-bottom: 28px;
+  }
+  
+  .stat-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    text-align: center;
+  }
+  
+  .stat-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .scheduled-bg {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  
+  .sent-bg {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+  
+  .delivered-bg {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  
+  .failed-bg {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+  
+  .stat-label {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #374151;
+  }
+  
+  .stat-value {
+    margin: 12px 0 0;
+    font-size: 34px;
+    font-weight: 800;
+    color: #111827;
+  }
+  
+  .queue-table-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  }
+  
+  .queue-table-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  
+  .table-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: #7c2d12;
+  }
+  
+  .table-total {
+    margin: 0;
+    color: #6b7280;
+    font-size: 15px;
+  }
+  
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .queue-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .queue-table thead th {
+    background: #f8fafc;
+    color: #374151;
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  
+  .queue-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #111827;
+    font-size: 15px;
+    vertical-align: top;
+  }
+  
+  .queue-table tbody tr:hover {
+    background: #f9fafb;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+  
+  .status-badge.scheduled {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  
+  .status-badge.sent {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+  
+  .status-badge.delivered {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+  
+  .status-badge.failed {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+  
+  .empty-text {
+    color: #6b7280;
+    font-size: 16px;
+    margin: 0;
+  }
+  
+  .capitalize {
+    text-transform: capitalize;
+  }

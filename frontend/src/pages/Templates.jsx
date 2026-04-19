@@ -6,19 +6,21 @@ export default function Templates() {
   const [templates, setTemplates] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
-    type: "Birthday",
+    type: "birthday",
     subject: "",
     htmlContent: "",
   });
 
+  const API_BASE = "http://localhost:5000";
+
   const loadTemplates = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/templates");
+      const res = await fetch(`${API_BASE}/api/templates`);
       const data = await res.json();
-
       setTemplates(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("LOAD TEMPLATES ERROR:", err);
@@ -32,7 +34,77 @@ export default function Templates() {
   }, []);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "type" ? value.toLowerCase() : value,
+    }));
+  };
+
+  const resetForm = () => {
+    setForm({
+      name: "",
+      type: "birthday",
+      subject: "",
+      htmlContent: "",
+    });
+    setEditingId(null);
+  };
+
+  const handleToggleForm = () => {
+    if (showForm) {
+      resetForm();
+    }
+    setShowForm(!showForm);
+  };
+
+  const handleEdit = (template) => {
+    setEditingId(template.id);
+    setForm({
+      name: template.name || "",
+      type: (template.type || "birthday").toLowerCase(),
+      subject: template.subject || "",
+      htmlContent: template.content || "",
+    });
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    toast.success("Template loaded for editing");
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this template?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/templates/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to delete template");
+      }
+
+      if (editingId === id) {
+        resetForm();
+        setShowForm(false);
+      }
+
+      await loadTemplates();
+      toast.success("Template deleted successfully");
+    } catch (err) {
+      console.error("DELETE TEMPLATE ERROR:", err);
+      toast.error(err.message || "Failed to delete template");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    resetForm();
+    setShowForm(false);
   };
 
   const handleSubmit = async (e) => {
@@ -46,39 +118,43 @@ export default function Templates() {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/templates", {
-        method: "POST",
+      const url = editingId
+        ? `${API_BASE}/api/templates/${editingId}`
+        : `${API_BASE}/api/templates`;
+
+      const method = editingId ? "PUT" : "POST";
+
+      const payload = {
+        name: form.name.trim(),
+        type: form.type.toLowerCase().trim(),
+        subject: form.subject.trim(),
+        content: form.htmlContent.trim(),
+      };
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: form.name,
-          type: form.type,
-          subject: form.subject,
-          htmlContent: form.htmlContent,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Failed to create template");
+        throw new Error(data.error || "Failed to save template");
       }
 
-      setForm({
-        name: "",
-        type: "Birthday",
-        subject: "",
-        htmlContent: "",
-      });
-
+      resetForm();
       setShowForm(false);
       await loadTemplates();
 
-      toast.success("Template created successfully");
+      toast.success(
+        editingId ? "Template updated successfully" : "Template created successfully"
+      );
     } catch (err) {
-      console.error("ADD TEMPLATE ERROR:", err);
-      toast.error(err.message || "Failed to create template");
+      console.error("SAVE TEMPLATE ERROR:", err);
+      toast.error(err.message || "Failed to save template");
     } finally {
       setLoading(false);
     }
@@ -94,8 +170,9 @@ export default function Templates() {
           </div>
 
           <button
+            type="button"
             className="new-template-btn"
-            onClick={() => setShowForm(!showForm)}
+            onClick={handleToggleForm}
           >
             {showForm ? "Close Form" : "+ New Template"}
           </button>
@@ -122,11 +199,11 @@ export default function Templates() {
                   value={form.type}
                   onChange={handleChange}
                 >
-                  <option value="Birthday">Birthday</option>
-                  <option value="Anniversary">Anniversary</option>
-                  <option value="Welcome">Welcome</option>
-                  <option value="Festival">Festival</option>
-                  <option value="Event">Event</option>
+                  <option value="birthday">Birthday</option>
+                  <option value="anniversary">Anniversary</option>
+                  <option value="welcome">Welcome</option>
+                  <option value="festival">Festival</option>
+                  <option value="event">Event</option>
                 </select>
               </div>
             </div>
@@ -153,9 +230,25 @@ export default function Templates() {
               />
             </div>
 
-            <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? "Saving..." : "Create Template"}
-            </button>
+            <div className="template-action-row">
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading
+                  ? "Saving..."
+                  : editingId
+                  ? "Update Template"
+                  : "Create Template"}
+              </button>
+
+              {editingId && (
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={handleCancelEdit}
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
         )}
       </div>
@@ -175,6 +268,7 @@ export default function Templates() {
                   <th>Type</th>
                   <th>Subject</th>
                   <th>Content</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -184,7 +278,25 @@ export default function Templates() {
                     <td>{template.name || "-"}</td>
                     <td>{template.type || "-"}</td>
                     <td>{template.subject || "-"}</td>
-                    <td>{template.htmlContent || template.body || "-"}</td>
+                    <td>{template.content || "-"}</td>
+                    <td>
+                      <div className="template-table-actions">
+                        <button
+                          type="button"
+                          className="edit-btn"
+                          onClick={() => handleEdit(template)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="delete-btn"
+                          onClick={() => handleDelete(template.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>

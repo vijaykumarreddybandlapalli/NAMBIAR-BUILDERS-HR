@@ -1,26 +1,26 @@
 {
   "name": "nambiar-backend",
   "version": "1.0.0",
-  "description": "Backend for Nambiar Builders Email Wishes Portal",
+  "description": "Nambiar Builders HR backend",
   "main": "src/server.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:deploy": "prisma migrate deploy"
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:push": "prisma db push"
   },
   "dependencies": {
-    "@prisma/client": "^6.6.0",
+    "@prisma/client": "^5.22.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.21.2",
+    "express": "^4.21.0",
     "node-cron": "^3.0.3",
-    "nodemailer": "^8.0.5"
+    "nodemailer": "^6.9.15"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10",
-    "prisma": "^6.6.0"
+    "nodemon": "^3.1.7",
+    "prisma": "^5.22.0"
   }
 }

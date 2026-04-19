@@ -1,122 +1,86 @@
 .email-center-page {
-    padding: 24px;
-    background: #f5f1ea;
-    min-height: 100vh;
-  }
-  
-  .email-card {
-    background: #ffffff;
-    border-radius: 22px;
-    padding: 28px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    margin-bottom: 24px;
-  }
-  
-  .email-card h1,
-  .email-card h2 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: #2d241c;
-  }
-  
-  .email-card p {
-    margin-top: 8px;
-    margin-bottom: 24px;
-    color: #8a7f73;
-    font-size: 15px;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-  }
-  
-  .form-group label {
-    font-size: 15px;
-    font-weight: 600;
-    color: #3d342c;
-    margin-bottom: 10px;
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    border: 1px solid #ddd2c3;
-    border-radius: 16px;
-    padding: 16px 18px;
-    font-size: 16px;
-    outline: none;
-    background: #fffdf9;
-    color: #2d241c;
-    box-sizing: border-box;
-  }
-  
-  .form-group input:focus,
-  .form-group textarea:focus {
-    border-color: #a06d2c;
-    box-shadow: 0 0 0 3px rgba(160, 109, 44, 0.12);
-  }
-  
-  .form-group textarea {
-    resize: vertical;
-    min-height: 220px;
-  }
-  
-  .submit-btn {
-    width: 100%;
-    background: #9a6b2f;
-    color: #ffffff;
-    border: none;
-    padding: 16px;
-    border-radius: 16px;
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.3s ease;
-  }
-  
-  .submit-btn:hover,
-  .action-btn:hover {
-    background: #7f5523;
-  }
-  
-  .submit-btn:disabled,
-  .action-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  .button-row {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  
-  .action-btn {
-    background: #9a6b2f;
-    color: #ffffff;
-    border: none;
-    padding: 14px 22px;
-    border-radius: 16px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.3s ease;
-    min-width: 180px;
-  }
-  
-  @media (max-width: 768px) {
-    .email-card {
-      padding: 20px;
-    }
-  
-    .button-row {
-      flex-direction: column;
-    }
-  
-    .action-btn {
-      width: 100%;
-    }
-  }
+  padding: 24px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f7f2ea 0%, #eef7f0 40%, #fff8f5 100%);
+}
+
+.email-center-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(160, 109, 44, 0.12);
+}
+
+.email-center-card h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d241c;
+}
+
+.email-center-card p {
+  margin-top: 8px;
+  margin-bottom: 24px;
+  color: #8a7f73;
+  font-size: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #3d342c;
+  margin-bottom: 10px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid #ddd2c3;
+  border-radius: 16px;
+  padding: 16px 18px;
+  font-size: 16px;
+  outline: none;
+  background: #fffdf9;
+  color: #2d241c;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #a06d2c;
+  box-shadow: 0 0 0 3px rgba(160, 109, 44, 0.12);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 220px;
+}
+
+.send-btn {
+  width: 100%;
+  background: #9a6b2f;
+  color: #ffffff;
+  border: none;
+  padding: 16px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.send-btn:hover {
+  background: #7f5523;
+}
+
+.send-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

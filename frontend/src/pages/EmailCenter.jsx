@@ -1,196 +1,289 @@
-// export default function EmailCenter() {
-//     return <h1>Email Center</h1>;
-//   }
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import "./EmailCenter.css";
 
 export default function EmailCenter() {
-  const [customEmail, setCustomEmail] = useState({
-    recipient: "",
+  const [templates, setTemplates] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    to: "",
+    employeeId: "",
+    templateType: "",
     subject: "",
     message: "",
   });
 
-  const [employeeEmail, setEmployeeEmail] = useState({
-    employeeId: "",
-  });
+  const API_BASE = "http://localhost:5000";
 
-  const [loadingCustom, setLoadingCustom] = useState(false);
-  const [loadingEmployee, setLoadingEmployee] = useState(false);
+  useEffect(() => {
+    loadTemplates();
+    loadEmployees();
+  }, []);
 
-  const handleCustomChange = (e) => {
-    setCustomEmail({ ...customEmail, [e.target.name]: e.target.value });
+  const loadTemplates = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/templates`);
+      const data = await res.json();
+      setTemplates(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("LOAD TEMPLATES ERROR:", error);
+      toast.error("Failed to load templates");
+    }
   };
 
-  const handleEmployeeChange = (e) => {
-    setEmployeeEmail({ ...employeeEmail, [e.target.name]: e.target.value });
+  const loadEmployees = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/employees`);
+      const data = await res.json();
+      setEmployees(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("LOAD EMPLOYEES ERROR:", error);
+      toast.error("Failed to load employees");
+    }
   };
 
-  const sendCustomEmail = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const replaceTemplateVariables = (text, employee) => {
+    if (!text) return "";
+
+    const currentDate = new Date();
+    let years = "";
+
+    if (employee?.joiningDate) {
+      const joiningDate = new Date(employee.joiningDate);
+      let serviceYears = currentDate.getFullYear() - joiningDate.getFullYear();
+
+      const notCompletedYet =
+        currentDate.getMonth() < joiningDate.getMonth() ||
+        (currentDate.getMonth() === joiningDate.getMonth() &&
+          currentDate.getDate() < joiningDate.getDate());
+
+      if (notCompletedYet) {
+        serviceYears--;
+      }
+
+      years = serviceYears >= 0 ? serviceYears : "";
+    }
+
+    return text
+      .replace(/{{\s*name\s*}}/gi, employee?.name || "")
+      .replace(/{{\s*company\s*}}/gi, "Nambiar Builders")
+      .replace(/{{\s*years\s*}}/gi, String(years));
+  };
+
+  const handleEmployeeSelect = (e) => {
+    const employeeId = e.target.value;
+
+    const selectedEmployee = employees.find(
+      (emp) => String(emp.id) === String(employeeId)
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      employeeId,
+      to: selectedEmployee?.email || "",
+    }));
+
+    if (selectedEmployee && form.templateType) {
+      const selectedTemplate = templates.find(
+        (tpl) => tpl.type === form.templateType
+      );
+
+      if (selectedTemplate) {
+        setForm((prev) => ({
+          ...prev,
+          employeeId,
+          to: selectedEmployee?.email || "",
+          subject: replaceTemplateVariables(
+            selectedTemplate.subject,
+            selectedEmployee
+          ),
+          message: replaceTemplateVariables(
+            selectedTemplate.content,
+            selectedEmployee
+          ),
+        }));
+      }
+    }
+  };
+
+  const handleTemplateSelect = (e) => {
+    const templateType = e.target.value;
+
+    const selectedTemplate = templates.find(
+      (template) => template.type === templateType
+    );
+
+    const selectedEmployee = employees.find(
+      (emp) => String(emp.id) === String(form.employeeId)
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      templateType,
+      subject: selectedTemplate
+        ? replaceTemplateVariables(selectedTemplate.subject, selectedEmployee)
+        : "",
+      message: selectedTemplate
+        ? replaceTemplateVariables(selectedTemplate.content, selectedEmployee)
+        : "",
+    }));
+  };
+
+  const resetForm = () => {
+    setForm({
+      to: "",
+      employeeId: "",
+      templateType: "",
+      subject: "",
+      message: "",
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !customEmail.recipient.trim() ||
-      !customEmail.subject.trim() ||
-      !customEmail.message.trim()
-    ) {
-      alert("Please fill all custom email fields");
+    if (!form.to || !form.subject || !form.message) {
+      toast.error("Please fill all required fields");
       return;
     }
 
     try {
-      setLoadingCustom(true);
+      setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/email/send-custom", {
+      const res = await fetch(`${API_BASE}/api/email/send`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          to: customEmail.recipient,
-          subject: customEmail.subject,
-          message: customEmail.message,
+          to: form.to.trim(),
+          subject: form.subject.trim(),
+          message: form.message.trim(),
+          employeeId: form.employeeId || null,
+          templateType: form.templateType || null,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data?.error || "Failed to send custom email");
+        throw new Error(data.error || "Failed to send email");
       }
 
-      alert("Custom email sent successfully");
-
-      setCustomEmail({
-        recipient: "",
-        subject: "",
-        message: "",
-      });
-    } catch (err) {
-      console.error("SEND CUSTOM EMAIL ERROR:", err);
-      alert(err.message || "Failed to send custom email");
+      toast.success("Email sent successfully");
+      resetForm();
+    } catch (error) {
+      console.error("SEND EMAIL ERROR:", error);
+      toast.error(error.message || "Failed to send email");
     } finally {
-      setLoadingCustom(false);
-    }
-  };
-
-  const sendEmployeeEmail = async (type) => {
-    if (!employeeEmail.employeeId.trim()) {
-      alert("Please enter Employee DB ID");
-      return;
-    }
-
-    try {
-      setLoadingEmployee(true);
-
-      const res = await fetch("http://localhost:5000/api/email/send-employee", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          employeeId: employeeEmail.employeeId,
-          type,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.error || `Failed to send ${type} email`);
-      }
-
-      alert(`${type} email sent successfully`);
-      setEmployeeEmail({ employeeId: "" });
-    } catch (err) {
-      console.error("SEND EMPLOYEE EMAIL ERROR:", err);
-      alert(err.message || "Failed to send employee email");
-    } finally {
-      setLoadingEmployee(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="email-center-page">
-      <div className="email-card">
-        <h1>Email Center</h1>
-        <p>Send custom emails and employee greeting emails from one place.</p>
+      <div className="email-center-card">
+        <div className="email-center-header">
+          <div>
+            <h1>Email Center</h1>
+            <p>Send manual emails using saved templates.</p>
+          </div>
+        </div>
 
-        <form onSubmit={sendCustomEmail}>
-          <div className="form-group">
-            <label>Recipient Email</label>
+        <form className="email-form" onSubmit={handleSubmit}>
+          <div className="email-row">
+            <div className="form-group">
+              <label>Select Employee</label>
+              <select
+                name="employeeId"
+                value={form.employeeId}
+                onChange={handleEmployeeSelect}
+              >
+                <option value="">Choose employee</option>
+                {employees.map((employee) => (
+                  <option key={employee.id} value={employee.id}>
+                    {employee.name} - {employee.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Select Template</label>
+              <select
+                name="templateType"
+                value={form.templateType}
+                onChange={handleTemplateSelect}
+              >
+                <option value="">Choose template</option>
+                {templates.map((template) => (
+                  <option key={template.id} value={template.type}>
+                    {template.name} ({template.type})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="form-group full-width">
+            <label>To</label>
             <input
               type="email"
-              name="recipient"
-              placeholder="Recipient email"
-              value={customEmail.recipient}
-              onChange={handleCustomChange}
+              name="to"
+              placeholder="Enter receiver email"
+              value={form.to}
+              onChange={handleChange}
             />
           </div>
 
-          <div className="form-group">
-            <label>Email Subject</label>
+          <div className="form-group full-width">
+            <label>Subject</label>
             <input
               type="text"
               name="subject"
               placeholder="Email subject"
-              value={customEmail.subject}
-              onChange={handleCustomChange}
+              value={form.subject}
+              onChange={handleChange}
             />
           </div>
 
-          <div className="form-group">
-            <label>Email Message</label>
+          <div className="form-group full-width">
+            <label>Message / HTML Content</label>
             <textarea
               name="message"
-              placeholder="Write your email message here"
-              value={customEmail.message}
-              onChange={handleCustomChange}
-              rows="8"
+              placeholder="Write your email message"
+              value={form.message}
+              onChange={handleChange}
+              rows="10"
             />
           </div>
 
-          <button type="submit" className="submit-btn" disabled={loadingCustom}>
-            {loadingCustom ? "Sending..." : "Send Custom Email"}
-          </button>
+          <div className="email-action-row">
+            <button type="submit" className="send-btn" disabled={loading}>
+              {loading ? "Sending..." : "Send Email"}
+            </button>
+
+            <button
+              type="button"
+              className="reset-btn"
+              onClick={resetForm}
+              disabled={loading}
+            >
+              Reset
+            </button>
+          </div>
         </form>
-      </div>
-
-      <div className="email-card">
-        <h2>Send Employee Emails</h2>
-        <p>Send birthday or anniversary email using employee database ID.</p>
-
-        <div className="form-group">
-          <label>Employee DB ID</label>
-          <input
-            type="text"
-            name="employeeId"
-            placeholder="Employee DB ID (example: 1)"
-            value={employeeEmail.employeeId}
-            onChange={handleEmployeeChange}
-          />
-        </div>
-
-        <div className="button-row">
-          <button
-            type="button"
-            className="action-btn"
-            disabled={loadingEmployee}
-            onClick={() => sendEmployeeEmail("birthday")}
-          >
-            {loadingEmployee ? "Sending..." : "Birthday Email"}
-          </button>
-
-          <button
-            type="button"
-            className="action-btn"
-            disabled={loadingEmployee}
-            onClick={() => sendEmployeeEmail("anniversary")}
-          >
-            {loadingEmployee ? "Sending..." : "Anniversary Email"}
-          </button>
-        </div>
       </div>
     </div>
   );
