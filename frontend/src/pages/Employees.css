@@ -1,101 +1,206 @@
 .employees-page {
-    padding: 24px;
-    background: #eaf3ff; /* light blue background */
-    min-height: 100vh;
+  padding: 24px;
+  background: #eaf3ff;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.employees-header {
+  background: #dbeafe;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.employees-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #1d3557;
+}
+
+.employees-header p {
+  margin-top: 6px;
+  color: #4a6fa5;
+}
+
+/* CARD */
+.employees-card {
+  background: #e3f0ff;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid #c7d7ff;
+}
+
+.employees-card h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: #1d3557;
+}
+
+/* INPUTS */
+.employees-card input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  border: 1px solid #c7d7ff;
+  background: #f8fbff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* INPUT FOCUS */
+.employees-card input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+/* LABEL */
+.employees-card label {
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  display: block;
+  color: #1d3557;
+}
+
+/* FORM MAIN BUTTON */
+.employees-card form button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  width: 100%;
+  transition: 0.3s;
+  font-weight: 600;
+}
+
+.employees-card form button:hover {
+  background: #357abd;
+}
+
+/* FORM ACTIONS */
+.employee-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.employee-form-actions button {
+  flex: 1;
+}
+
+.cancel-btn {
+  background: #9aa5b1 !important;
+  color: #ffffff;
+}
+
+.cancel-btn:hover {
+  background: #7f8a96 !important;
+}
+
+/* TABLE */
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.employee-table th {
+  background: #dbeafe;
+  padding: 12px;
+  text-align: left;
+  color: #1d3557;
+}
+
+.employee-table td {
+  padding: 12px;
+  border-top: 1px solid #d6e4ff;
+  color: #1d3557;
+}
+
+.employee-table tr:hover {
+  background: #f0f7ff;
+}
+
+/* ACTION BUTTONS */
+.employee-action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  background: #f59e0b;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  width: auto !important;
+  transition: 0.3s;
+}
+
+.edit-btn:hover {
+  background: #d97706;
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  width: auto !important;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
+
+/* EMPTY */
+.empty-text {
+  color: #4a6fa5;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .employee-form-actions {
+    flex-direction: column;
   }
-  
-  /* HEADER */
-  .employees-header {
-    background: #dbeafe; /* light blue card */
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 20px;
+
+  .employee-action-buttons {
+    flex-direction: column;
   }
-  
-  .employees-header h1 {
-    margin: 0;
-    font-size: 28px;
-    color: #1d3557;
+
+  .edit-btn,
+  .delete-btn {
+    width: 100% !important;
   }
-  
-  .employees-header p {
-    margin-top: 6px;
-    color: #4a6fa5;
+
+  .employee-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
-  
-  /* CARD */
-  .employees-card {
-    background: #e3f0ff; /* soft blue */
-    border-radius: 20px;
-    padding: 24px;
-    margin-bottom: 20px;
-    border: 1px solid #c7d7ff;
-  }
-  
-  /* INPUTS */
-  .employees-card input {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 12px;
+  .excel-import-box {
+    margin-top: 12px;
+    padding: 18px;
+    border: 2px dashed #93c5fd;
     border-radius: 14px;
-    border: 1px solid #c7d7ff;
     background: #f8fbff;
   }
   
-  /* INPUT FOCUS */
-  .employees-card input:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-  }
-  
-  /* LABEL */
-  .employees-card label {
-    font-weight: 600;
-    margin-top: 10px;
-    display: block;
-    color: #1d3557;
-  }
-  
-  /* BUTTON */
-  .employees-card button {
-    background: #4a90e2;
-    color: white;
+  .excel-import-box input[type="file"] {
     border: none;
-    padding: 12px;
-    border-radius: 14px;
-    cursor: pointer;
-    width: 100%;
-    transition: 0.3s;
+    background: transparent;
+    padding: 0;
+    margin: 0;
   }
-  
-  .employees-card button:hover {
-    background: #357abd;
-  }
-  
-  /* TABLE */
-  .employee-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
-  }
-  
-  .employee-table th {
-    background: #dbeafe;
-    padding: 12px;
-    text-align: left;
-    color: #1d3557;
-  }
-  
-  .employee-table td {
-    padding: 12px;
-    border-top: 1px solid #d6e4ff;
-  }
-  
-  .employee-table tr:hover {
-    background: #f0f7ff;
-  }
-  
-  /* EMPTY */
-  .empty-text {
-    color: #4a6fa5;
-  }
+}

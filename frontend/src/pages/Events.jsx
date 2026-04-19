@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import "./Events.css";
 
-export default function Events() {
+export default function Events({ refreshAllData }) {
   const [events, setEvents] = useState([]);
   const [form, setForm] = useState({
     eventName: "",
@@ -23,8 +24,13 @@ export default function Events() {
     } catch (err) {
       console.error("LOAD EVENTS ERROR:", err);
       setEvents([]);
+      toast.error("Failed to load events");
     }
   };
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,7 +40,7 @@ export default function Events() {
     e.preventDefault();
 
     if (!form.eventName || !form.eventDate) {
-      alert("Event name and date are required");
+      toast.error("Event name and date are required");
       return;
     }
 
@@ -53,8 +59,10 @@ export default function Events() {
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error("Failed to add event");
+        throw new Error(data.error || "Failed to add event");
       }
 
       setForm({
@@ -64,17 +72,15 @@ export default function Events() {
       });
 
       await loadEvents();
+      await refreshAllData();
+      toast.success("Event added successfully");
     } catch (err) {
       console.error("ADD EVENT ERROR:", err);
-      alert("Failed to add event");
+      toast.error(err.message || "Failed to add event");
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    loadEvents();
-  }, []);
 
   return (
     <div className="events-page">

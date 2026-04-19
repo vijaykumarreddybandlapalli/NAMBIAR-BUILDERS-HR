@@ -17,21 +17,23 @@ router.get("/count", async (req, res) => {
 // CREATE
 router.post("/", async (req, res) => {
   try {
-    console.log("POST BODY:", req.body);
+    const {
+      employeeId,
+      name,
+      email,
+      department,
+      dateOfBirth,
+      joiningDate,
+    } = req.body;
 
-    const { name, email, department, dateOfBirth, dateOfJoining } = req.body;
-
-    if (!name || !email || !department || !dateOfBirth || !dateOfJoining) {
+    if (!name || !email || !department || !dateOfBirth || !joiningDate) {
       return res.status(400).json({
         error: "All fields are required",
       });
     }
 
     const dob = new Date(dateOfBirth);
-    const doj = new Date(dateOfJoining);
-
-    console.log("DOB:", dob);
-    console.log("DOJ:", doj);
+    const doj = new Date(joiningDate);
 
     if (isNaN(dob.getTime()) || isNaN(doj.getTime())) {
       return res.status(400).json({
@@ -41,15 +43,14 @@ router.post("/", async (req, res) => {
 
     const data = await prisma.employee.create({
       data: {
+        employeeId: employeeId || null,
         name,
         email,
         department,
         dateOfBirth: dob,
-        dateOfJoining: doj,
+        joiningDate: doj,
       },
     });
-
-    console.log("EMPLOYEE CREATED:", data);
 
     res.status(201).json(data);
   } catch (err) {
@@ -74,10 +75,23 @@ router.get("/", async (req, res) => {
 // UPDATE
 router.put("/:id", async (req, res) => {
   try {
-    const { name, email, department, dateOfBirth, dateOfJoining } = req.body;
+    const {
+      employeeId,
+      name,
+      email,
+      department,
+      dateOfBirth,
+      joiningDate,
+    } = req.body;
+
+    if (!name || !email || !department || !dateOfBirth || !joiningDate) {
+      return res.status(400).json({
+        error: "All fields are required",
+      });
+    }
 
     const dob = new Date(dateOfBirth);
-    const doj = new Date(dateOfJoining);
+    const doj = new Date(joiningDate);
 
     if (isNaN(dob.getTime()) || isNaN(doj.getTime())) {
       return res.status(400).json({
@@ -88,11 +102,12 @@ router.put("/:id", async (req, res) => {
     const data = await prisma.employee.update({
       where: { id: Number(req.params.id) },
       data: {
+        employeeId: employeeId || null,
         name,
         email,
         department,
         dateOfBirth: dob,
-        dateOfJoining: doj,
+        joiningDate: doj,
       },
     });
 
@@ -113,6 +128,42 @@ router.delete("/:id", async (req, res) => {
     res.json({ message: "Deleted successfully" });
   } catch (err) {
     console.error("DELETE ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// BULK IMPORT
+router.post("/bulk", async (req, res) => {
+  try {
+    const { employees } = req.body;
+
+    if (!Array.isArray(employees) || employees.length === 0) {
+      return res.status(400).json({ error: "Employees array is required" });
+    }
+
+    const preparedEmployees = employees
+      .filter((emp) => emp.name && emp.email && emp.department && emp.dateOfBirth && emp.joiningDate)
+      .map((emp) => ({
+        employeeId: emp.employeeId || null,
+        name: String(emp.name).trim(),
+        email: String(emp.email).trim(),
+        department: String(emp.department).trim(),
+        dateOfBirth: new Date(emp.dateOfBirth),
+        joiningDate: new Date(emp.joiningDate),
+      }));
+
+    const result = await prisma.employee.createMany({
+      data: preparedEmployees,
+      skipDuplicates: true,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Employees imported successfully",
+      insertedCount: result.count,
+    });
+  } catch (err) {
+    console.error("BULK IMPORT ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });

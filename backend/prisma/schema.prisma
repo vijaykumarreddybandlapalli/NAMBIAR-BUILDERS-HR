@@ -8,23 +8,24 @@ generator client {
 }
 
 model Employee {
-  id            Int      @id @default(autoincrement())
-  name          String
-  email         String   @unique
-  department    String
-  dateOfBirth   DateTime
-  dateOfJoining DateTime
-  createdAt     DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  employeeId  String?
+  name        String
+  email       String   @unique
+  department  String
+  dateOfBirth DateTime
+  joiningDate DateTime
+  createdAt   DateTime @default(now())
 }
 
 model Template {
-  id        Int      @id @default(autoincrement())
-  name      String
-  type      String
-  subject   String
-  body      String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  subject     String
+  htmlContent String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
 }
 
 model Event {
@@ -32,6 +33,6 @@ model Event {
   title       String
   description String?
   date        DateTime
-  type        String
+  type        String?
   createdAt   DateTime @default(now())
 }
